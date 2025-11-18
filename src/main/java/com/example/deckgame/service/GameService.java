@@ -21,7 +21,6 @@ public class GameService {
         this.deckClient = deckClient;
     }
 
-
     public PlayResult play(PlayRequest req) {
         if (req.getPlayers() <= 0 || req.getCardsPerPlayer() <= 0) {
             throw new IllegalArgumentException("O número de jogadores e cartas por mão deve ser > 0.");
@@ -51,8 +50,21 @@ public class GameService {
             scores.add(new PlayerScore("Player " + (i+1), sum, cards));
         }
 
+        // Lista completa dos jogadores (players)
+        List<PlayResult.PlayerResult> allPlayers = scores.stream()
+                .map(s -> {
+                    PlayResult.PlayerResult pr = new PlayResult.PlayerResult();
+                    pr.setName(s.name);
+                    pr.setSum(s.sum);
+                    pr.setCards(s.cards);
+                    return pr;
+                })
+                .collect(Collectors.toList());
 
+
+        // Encontrar o(s) vencedor(es)
         int max = scores.stream().mapToInt(s -> s.sum).max().orElse(0);
+
         List<PlayResult.PlayerResult> winners = scores.stream()
                 .filter(s -> s.sum == max)
                 .map(s -> {
@@ -64,8 +76,11 @@ public class GameService {
                 }).collect(Collectors.toList());
 
 
+        // Montar resposta completa
         PlayResult result = new PlayResult();
+        result.setPlayers(allPlayers);
         result.setWinners(winners);
+
         return result;
     }
 
