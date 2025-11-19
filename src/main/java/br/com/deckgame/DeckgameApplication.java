@@ -1,4 +1,4 @@
-package com.example.deckgame;
+package br.com.deckgame;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
